@@ -168,8 +168,8 @@ impl Proactor {
     fn prepare(&self, count: u32) -> Result<SQEs<'_>, EventListener> {
         if self.in_flight.leases() >= count {
             let ring = unsafe { &mut *self.ring.get() };
-            self.in_flight.lease(count);
             if let Some(sqes) = ring.prepare_sqes(count) {
+                self.in_flight.lease(count);
                 Ok(sqes)
             } else {
                 Err(self.in_queue.listen())
