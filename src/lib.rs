@@ -187,6 +187,7 @@ impl Proactor {
             // First, submit events to the kernel. If `wait_for` is not `0`, this will
             // block until that many events complete.
             let submitted = ring.submit_sqes_and_wait(wait_for)?;
+            self.in_queue.notify_additional(submitted as usize);
 
             // Then, we events that have completed. These events will be processed in
             // batches of `4`, to reduce the number of synchronizations with the kernel
@@ -227,7 +228,6 @@ impl Proactor {
                 // semaphore will not be starved by events that have just completed
                 // their work (assuming the executor runs task in a FIFO order).
                 uring_sys::io_uring_cq_advance(ring, count);
-                self.in_queue.notify_additional(submitted as usize);
                 self.in_flight.release(count);
                 cqes.iter_mut().take(count as usize).filter_map(Option::take).for_each(ringbahn::drive::complete);
 
