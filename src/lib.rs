@@ -18,10 +18,29 @@ use waker_fn::waker_fn;
 const ENTRIES: u32 = 32;
 thread_local!(static PROACTOR: Proactor = Proactor::new(ENTRIES).unwrap());
 
+/// Block on a future using the maglev proactor.
+///
+/// Similar to [`async_io::block_on`][async-io], this function submits io-uring events when the
+/// future it runs has yielded control.
+///
+/// [async-io]: https://docs.rs/async-io/1.1.3/async_io/fn.block_on.html
+#[inline]
 pub fn block_on<T>(future: impl Future<Output = T>) -> T {
     PROACTOR.with(|proactor| proactor.block_on(future))
 }
 
+/// Construct a new maglev [`Driver`].
+#[inline]
+pub fn driver() -> Driver {
+    Driver::default()
+}
+
+/// A driver that can be used with [ringbahn][ringbahn].
+///
+/// This type implements the [`Drive`][ringbahn::Drive] trait, so that it can be used to drive
+/// submissions to an io-uring instance with the futures and IO objects in the ringbahn library.
+///
+/// [ringbahn]: https://github.com/ringbahn/ringbahn
 #[derive(Default)]
 pub struct Driver {
     listener: Option<EventListener>,
