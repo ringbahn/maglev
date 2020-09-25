@@ -11,14 +11,11 @@ futures-core = "0.3.5"
 uring-sys = "0.7.4"
 waker-fn = "1.1.0"
 parking = "2.0.0"
+iou = "0.3.0"
 
 [dependencies.ringbahn]
 git = "https://github.com/withoutboats/ringbahn"
-branch = "iou-0.3"
-
-[dependencies.iou]
-git = "https://github.com/withoutboats/iou"
-branch = "iou-0.3"
+branch = "master"
 
 [dev-dependencies]
 futures = "0.3.0"
