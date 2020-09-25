@@ -14,7 +14,7 @@ parking = "2.0.0"
 iou = "0.3.0"
 
 [dependencies.ringbahn]
-git = "https://github.com/withoutboats/ringbahn"
+git = "https://github.com/ringbahn/ringbahn"
 branch = "master"
 
 [dev-dependencies]
